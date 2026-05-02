@@ -66,7 +66,30 @@ class GPXMapView: MKMapView {
     
     /// A custom ScaleBar
     var scaleBar: GPXScaleBar?
-    
+
+    /// Raster map attribution (non-Apple providers).
+    private lazy var mapProviderAttributionLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.preferredFont(forTextStyle: .caption2)
+        if #available(iOS 13.0, *) {
+            label.textColor = UIColor.secondaryLabel
+        } else {
+            // Fallback on earlier versions
+        }
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        if #available(iOS 13.0, *) {
+            label.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.55)
+        } else {
+            // Fallback on earlier versions
+        }
+        label.layer.cornerRadius = 4
+        label.clipsToBounds = true
+        label.isHidden = true
+        label.accessibilityIdentifier = "mapProviderAttribution"
+        return label
+    }()
+
     /// Selected tile server.
     /// - SeeAlso: GPXTileServer
     var tileServer: GPXTileServer = .apple {
@@ -81,8 +104,13 @@ class GPXMapView: MKMapView {
             
             // Add new overlay to map if not using Apple Maps
             if newValue != .apple && newValue != .appleSatellite {
+                guard let urlTemplate = newValue.resolvedTileURLTemplate, !urlTemplate.isEmpty else {
+                    print("GPXMapView: missing URL template for \(newValue.name); use Apple Maps until a valid API key is set.")
+                    self.mapType = .standard
+                    return
+                }
                 // Update cacheConfig
-                var config = MapCacheConfig(withUrlTemplate: newValue.templateUrl)
+                var config = MapCacheConfig(withUrlTemplate: urlTemplate)
                 config.subdomains = newValue.subdomains
                 config.tileSize = CGSize(width: newValue.tileSize, height: newValue.tileSize)
                 if newValue.maximumZ > 0 {
@@ -143,7 +171,9 @@ class GPXMapView: MKMapView {
         addGestureRecognizer(rotationGesture)
         isUserInteractionEnabled = true
         isMultipleTouchEnabled = true
-        
+
+        addSubview(mapProviderAttributionLabel)
+
         if #available(iOS 11, *) {
             self.showsCompass = false
         }
@@ -160,8 +190,25 @@ class GPXMapView: MKMapView {
                 compassView.frame = compassRect
             }
         }
-        
+
+        layoutMapAttributionFooter()
+
         updateMapInformation(tileServer)
+    }
+
+    private func layoutMapAttributionFooter() {
+        let text = tileServer.mapAttribution
+        if text.isEmpty {
+            mapProviderAttributionLabel.isHidden = true
+            return
+        }
+        mapProviderAttributionLabel.isHidden = false
+        mapProviderAttributionLabel.text = text
+        let safeBottom = safeAreaInsets.bottom
+        let h: CGFloat = 36
+        let y = bounds.height - h - max(4, safeBottom)
+        mapProviderAttributionLabel.frame = CGRect(x: 8, y: y, width: bounds.width - 16, height: h)
+        bringSubviewToFront(mapProviderAttributionLabel)
     }
     
     /// hides apple maps stuff when map tile != apple.
@@ -303,7 +350,8 @@ class GPXMapView: MKMapView {
         
         // Add tile server overlay
         // by removing all overlays, tile server overlay is also removed. We need to add it back
-        if tileServer != .apple {
+        if tileServer != .apple && tileServer != .appleSatellite,
+           let tpl = tileServer.resolvedTileURLTemplate, !tpl.isEmpty {
             addOverlayOnBottom(tileServerOverlay)
         }
     }

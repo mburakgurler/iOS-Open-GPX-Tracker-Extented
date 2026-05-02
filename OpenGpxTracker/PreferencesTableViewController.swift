@@ -337,6 +337,40 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
         return cell
     }
     
+    private func applyMapTileServerSelection(row: Int) {
+        let mapSection = kMapSourceSection
+        let selectedTileServerIndexPath = IndexPath(row: preferences.tileServerInt, section: mapSection)
+        tableView.cellForRow(at: selectedTileServerIndexPath)?.accessoryType = .none
+        let newIndexPath = IndexPath(row: row, section: mapSection)
+        tableView.cellForRow(at: newIndexPath)?.accessoryType = .checkmark
+        preferences.tileServerInt = row
+        delegate?.didUpdateTileServer(row)
+    }
+
+    private func promptForMapProviderApiKeyIfNeeded(server: GPXTileServer, targetRow: Int) {
+        let alert = UIAlertController(
+            title: NSLocalizedString("MAP_PROVIDER_API_KEY_TITLE", comment: ""),
+            message: NSLocalizedString("MAP_PROVIDER_API_KEY_MESSAGE", comment: ""),
+            preferredStyle: .alert
+        )
+        alert.addTextField { field in
+            field.autocorrectionType = .no
+            field.autocapitalizationType = .none
+            field.keyboardType = .asciiCapable
+            field.text = MapProviderAPIKeyStore.shared.apiKey(for: server.keyRequirement)
+        }
+        alert.addAction(UIAlertAction(title: NSLocalizedString("CANCEL", comment: ""), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("MAP_PROVIDER_API_KEY_SAVE_USE", comment: ""), style: .default) { [weak self] _ in
+            guard let self = self,
+                  let raw = alert.textFields?.first?.text else { return }
+            let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { return }
+            MapProviderAPIKeyStore.shared.setApiKey(trimmed, for: server.keyRequirement)
+            self.applyMapTileServerSelection(row: targetRow)
+        })
+        present(alert, animated: true)
+    }
+
     @objc private func sensorGPXPreferenceSwitchChanged(_ sender: UISwitch) {
         switch sender.tag {
         case kSensorSwitchTagMaster:
@@ -437,19 +471,15 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
             }
         }
         
-        if indexPath.section == kMapSourceSection { // section 1 (sets tileServerInt in defaults
+        if indexPath.section == kMapSourceSection {
             print("PreferenccesTableView Map Tile Server section Row at index:  \(indexPath.row)")
-            
-            // Remove checkmark from selected tile server
-            let selectedTileServerIndexPath = IndexPath(row: preferences.tileServerInt, section: indexPath.section)
-            tableView.cellForRow(at: selectedTileServerIndexPath)?.accessoryType = .none
-            
-            // Add checkmark to new tile server
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-            preferences.tileServerInt = indexPath.row
-            
-            // Update map
-            self.delegate?.didUpdateTileServer((indexPath as NSIndexPath).row)
+            let server = GPXTileServer(rawValue: indexPath.row)!
+            if server.keyRequirement != .none,
+               !MapProviderAPIKeyStore.shared.hasStoredKey(for: server.keyRequirement) {
+                promptForMapProviderApiKeyIfNeeded(server: server, targetRow: indexPath.row)
+            } else {
+                applyMapTileServerSelection(row: indexPath.row)
+            }
         }
         
         if indexPath.section == kActivityTypeSection {

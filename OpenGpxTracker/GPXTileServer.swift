@@ -8,6 +8,26 @@
 
 import Foundation
 
+/// Whether a raster map provider needs an API key (stored separately).
+enum MapProviderKeyRequirement: Int {
+    case none
+    case mapTiler
+    case stadia
+    case thunderforest
+    case jawg
+
+    /// UserDefaults key for the API token (iOS); `nil` when not applicable.
+    var storageKey: String? {
+        switch self {
+        case .none: return nil
+        case .mapTiler: return "MapProviderAPIKey.mapTiler"
+        case .stadia: return "MapProviderAPIKey.stadia"
+        case .thunderforest: return "MapProviderAPIKey.thunderforest"
+        case .jawg: return "MapProviderAPIKey.jawg"
+        }
+    }
+}
+
 ///
 /// Configuration for supported tile servers.
 ///
@@ -20,26 +40,44 @@ import Foundation
 enum GPXTileServer: Int {
     
     /// Apple tile server
-    case apple
+    case apple = 0
     
     /// Apple satellite tile server
-    case appleSatellite
+    case appleSatellite = 1
     
     /// OpenStreetMap tile server
-    case openStreetMap
+    case openStreetMap = 2
     // case AnotherMap
     
     /// CartoDB tile server
-    case cartoDB
+    case cartoDB = 3
     
     /// CartoDB tile server (2x tiles)
-    case cartoDBRetina
+    case cartoDBRetina = 4
     
     /// OpenTopoMap tile server
-    case openTopoMap
+    case openTopoMap = 5
     
     /// OpenSeaMap tile server
-    case openSeaMap
+    case openSeaMap = 6
+
+    /// CartoDB Positron (light basemap)
+    case cartoDBPositron = 7
+
+    /// CartoDB Dark Matter
+    case cartoDBDarkMatter = 8
+
+    /// OpenStreetMap Humanitarian (HOT) style
+    case openStreetMapHumanitarian = 9
+
+    /// MapTiler Streets (API key required)
+    case mapTilerStreets = 10
+
+    /// Stadia Alidade Smooth (API key required)
+    case stadiaAlidadeSmooth = 11
+
+    /// Thunderforest Outdoors (API key required)
+    case thunderforestOutdoors = 12
     
     /// String that describes the selected tile server.
     var name: String {
@@ -51,6 +89,48 @@ enum GPXTileServer: Int {
         case .cartoDBRetina: return "Carto DB (Retina resolution)"
         case .openTopoMap: return "OpenTopoMap"
         case .openSeaMap: return "OpenSeaMap"
+        case .cartoDBPositron: return "CartoDB Positron"
+        case .cartoDBDarkMatter: return "CartoDB Dark Matter"
+        case .openStreetMapHumanitarian: return "OpenStreetMap Humanitarian"
+        case .mapTilerStreets: return "MapTiler Streets"
+        case .stadiaAlidadeSmooth: return "Stadia Alidade Smooth"
+        case .thunderforestOutdoors: return "Thunderforest Outdoors"
+        }
+    }
+
+    /// Third-party attribution (empty for Apple MapKit).
+    var mapAttribution: String {
+        switch self {
+        case .apple, .appleSatellite:
+            return ""
+        case .openStreetMap, .openStreetMapHumanitarian:
+            return "© OpenStreetMap contributors"
+        case .cartoDB, .cartoDBRetina, .cartoDBPositron, .cartoDBDarkMatter:
+            return "© OpenStreetMap contributors © CARTO"
+        case .openTopoMap:
+            return "© OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)"
+        case .openSeaMap:
+            return "© OpenSeaMap contributors"
+        case .mapTilerStreets:
+            return "© MapTiler © OpenStreetMap contributors"
+        case .stadiaAlidadeSmooth:
+            return "© Stadia Maps © OpenMapTiles © OpenStreetMap contributors"
+        case .thunderforestOutdoors:
+            return "Maps © Thunderforest, Data © OpenStreetMap contributors"
+        }
+    }
+
+    /// API key policy for this tile server.
+    var keyRequirement: MapProviderKeyRequirement {
+        switch self {
+        case .mapTilerStreets:
+            return .mapTiler
+        case .stadiaAlidadeSmooth:
+            return .stadia
+        case .thunderforestOutdoors:
+            return .thunderforest
+        default:
+            return .none
         }
     }
     
@@ -64,6 +144,18 @@ enum GPXTileServer: Int {
         case .cartoDBRetina: return "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png"
         case .openTopoMap: return "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
         case .openSeaMap: return "https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
+        case .cartoDBPositron:
+            return "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
+        case .cartoDBDarkMatter:
+            return "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
+        case .openStreetMapHumanitarian:
+            return "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+        case .mapTilerStreets:
+            return "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key={apiKey}"
+        case .stadiaAlidadeSmooth:
+            return "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png?api_key={apiKey}"
+        case .thunderforestOutdoors:
+            return "https://api.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey={apiKey}"
         }
     }
     
@@ -79,9 +171,12 @@ enum GPXTileServer: Int {
         case .apple: return []
         case .appleSatellite: return []
         case .openStreetMap: return ["a", "b", "c"]
-        case .cartoDB, .cartoDBRetina: return ["a", "b", "c"]
+        case .cartoDB, .cartoDBRetina, .cartoDBPositron, .cartoDBDarkMatter: return ["a", "b", "c"]
         case .openTopoMap: return ["a", "b", "c"]
+        case .openStreetMapHumanitarian: return ["a", "b", "c"]
         case .openSeaMap: return []
+        case .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors:
+            return []
         // case .AnotherMap: return ["a","b"]
         }
     }
@@ -111,6 +206,16 @@ enum GPXTileServer: Int {
         // case .AnotherMap: return 10
         case .openSeaMap:
             return 16
+        case .cartoDBPositron, .cartoDBDarkMatter:
+            return 20
+        case .openStreetMapHumanitarian:
+            return 19
+        case .mapTilerStreets:
+            return 22
+        case .stadiaAlidadeSmooth:
+            return 20
+        case .thunderforestOutdoors:
+            return 22
         }
     }
     ///
@@ -134,6 +239,9 @@ enum GPXTileServer: Int {
         case .openTopoMap:
             return 0
         case .openSeaMap:
+            return 0
+        case .cartoDBPositron, .cartoDBDarkMatter, .openStreetMapHumanitarian,
+             .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors:
             return 0
         // case .AnotherMap: return 0
         }
@@ -171,10 +279,27 @@ enum GPXTileServer: Int {
         switch self {
         case .apple: return .system
         case .appleSatellite: return .darkMode
-        case .cartoDB, .cartoDBRetina, .openTopoMap, .openSeaMap, .openStreetMap: return .lightMode
+        case .cartoDBDarkMatter: return .darkMode
+        case .cartoDB, .cartoDBRetina, .cartoDBPositron, .openTopoMap, .openSeaMap, .openStreetMap,
+             .openStreetMapHumanitarian, .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors:
+            return .lightMode
         }
     }
 
     /// Returns the number of tile servers currently defined
-    static var count: Int { return GPXTileServer.openSeaMap.rawValue + 1}
+    static var count: Int { GPXTileServer.thunderforestOutdoors.rawValue + 1 }
 }
+
+#if os(iOS)
+extension GPXTileServer {
+
+    /// If the user chose a key-based provider but no key is stored, fall back to Apple Maps.
+    func withFallbackWhenApiKeyMissing() -> GPXTileServer {
+        let req = keyRequirement
+        guard req != .none, let key = req.storageKey else { return self }
+        let value = UserDefaults.standard.string(forKey: key)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if value.isEmpty { return .apple }
+        return self
+    }
+}
+#endif

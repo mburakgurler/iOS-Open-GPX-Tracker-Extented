@@ -147,6 +147,15 @@ class Preferences: NSObject {
             _tileServer = GPXTileServer(rawValue: tileServerInt)!
             print("** Preferences:: loaded preference from defaults tileServerInt \(tileServerInt)")
         }
+
+        #if os(iOS)
+        let normalized = _tileServer.withFallbackWhenApiKeyMissing()
+        if normalized != _tileServer {
+            _tileServer = normalized
+            defaults.set(normalized.rawValue, forKey: kDefaultsKeyTileServerInt)
+            print("** Preferences:: normalized tile server (missing API key) to \(normalized.rawValue)")
+        }
+        #endif
         
         // load previous activity type
         if let activityTypeInt = defaults.object(forKey: kDefaultsKeyActivityType) as? Int {

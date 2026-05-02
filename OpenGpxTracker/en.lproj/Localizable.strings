@@ -43,6 +43,9 @@
 "CACHE" = "Cache";
 "CALCULATING" = "Calculating...";
 "MAP_SOURCE" = "Map Source";
+"MAP_PROVIDER_API_KEY_TITLE" = "API Key Required";
+"MAP_PROVIDER_API_KEY_MESSAGE" = "This map provider requires an API key.\nPlease enter your API key to continue.";
+"MAP_PROVIDER_API_KEY_SAVE_USE" = "Save & Use";
 "ACTIVITY_TYPE" = "Activity Type";
 "USE_IMPERIAL_UNITS" = "Use imperial units?";
 "OFFLINE_CACHE" = "Offline cache";

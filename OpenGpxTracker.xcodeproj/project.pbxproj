@@ -102,6 +102,7 @@
 		CAFE00112EDE5D1B00390001 /* SensorSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00012EDE5D1B00390001 /* SensorSnapshot.swift */; };
 		CAFE00122EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00022EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift */; };
 		CAFE00132EDE5D1B00390003 /* SensorSnapshotManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00032EDE5D1B00390003 /* SensorSnapshotManager.swift */; };
+		CAFE00142EDE5D1B00390004 /* MapTileProviderSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00042EDE5D1B00390004 /* MapTileProviderSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -243,6 +244,7 @@
 		CAFE00012EDE5D1B00390001 /* SensorSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSnapshot.swift; sourceTree = "<group>"; };
 		CAFE00022EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXSensorExtensionBuilder.swift; sourceTree = "<group>"; };
 		CAFE00032EDE5D1B00390003 /* SensorSnapshotManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorSnapshotManager.swift; sourceTree = "<group>"; };
+		CAFE00042EDE5D1B00390004 /* MapTileProviderSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileProviderSupport.swift; sourceTree = "<group>"; };
 		BF15092123916FC100F51F1B /* UIColor+DarkMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+DarkMode.swift"; sourceTree = "<group>"; };
 		BF177EE924D54F9200D5E021 /* CoreDataHelper+BatchDelete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreDataHelper+BatchDelete.swift"; sourceTree = "<group>"; };
 		BF1FE1A7230EAB9B00404B59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -344,6 +346,7 @@
 				CAFE00012EDE5D1B00390001 /* SensorSnapshot.swift */,
 				CAFE00022EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift */,
 				CAFE00032EDE5D1B00390003 /* SensorSnapshotManager.swift */,
+				CAFE00042EDE5D1B00390004 /* MapTileProviderSupport.swift */,
 				89EA86602157A08E002E03A7 /* Date+timeAgo.swift */,
 				89EA86642157C444002E03A7 /* Int+asFilesize.swift */,
 				89EA86622157B42C002E03A7 /* GPXFileInfo.swift */,
@@ -790,6 +793,7 @@
 				CAFE00112EDE5D1B00390001 /* SensorSnapshot.swift in Sources */,
 				CAFE00122EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift in Sources */,
 				CAFE00132EDE5D1B00390003 /* SensorSnapshotManager.swift in Sources */,
+				CAFE00142EDE5D1B00390004 /* MapTileProviderSupport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
