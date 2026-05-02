@@ -46,6 +46,7 @@ You can use Open GPX tracker for:
     - Offline cache On/Off
     - Clear cache
     - Select the map server
+    - **GPX sensor extensions (extended fork):** optional motion and barometer data inside each track point (`<extensions>` with `xmlns:sensor`). Default is **off** so GPX matches the original app. See **Preferences → GPX sensors** on iPhone: master toggle **Sensor data in GPX**, and **Advanced sensor detail** for gyroscope and magnetometer.
   - Darkmode
   - Multi-language support (thanks to volunteers): German, English, Spanish, Finnish, French, Italian, Dutch, Portuguese (Brazil), Russian, Ukranian and Chinese (simplified)
 
@@ -78,6 +79,22 @@ This application is written in Swift. To download the code run this command in a
 Then, to test it open `OpenGpxTracker.xcodeproj` with Xcode.
 
 Please note the [limitations of using OpenStreetMap Tile Servers](http://wiki.openstreetmap.org/wiki/Tile_usage_policy)
+
+### GPX sensor extensions (this fork)
+
+Optional iPhone sensor samples are written into each `<trkpt>` under `<extensions>` using the `sensor` XML namespace (`https://opengpxtracker.app/schema/sensor/1.0`). Sampling uses Core Motion and `CMAltimeter`; only the **latest** sample is attached when each GPS point is recorded, so file size stays bounded.
+
+| File | Role |
+|------|------|
+| `OpenGpxTracker/SensorSnapshot.swift` | In-memory snapshot model for one track point |
+| `OpenGpxTracker/SensorSnapshotManager.swift` | Starts/stops sensors with tracking; exposes `currentSnapshot()` |
+| `OpenGpxTracker/GPXSensorExtensionBuilder.swift` | Builds CoreGPX `GPXExtensions` / `GPXExtensionsElement` trees |
+| `OpenGpxTracker/GPXSession.swift` | `newRootForCurrentExportPreferences()` adds `xmlns:sensor` when enabled; `addPointToCurrentTrackSegment(_:derivedFrom:)` |
+| `OpenGpxTracker/GPXMapView.swift` | Attaches extensions to `GPXTrackPoint` when saving points |
+| `OpenGpxTracker/Preferences.swift` | `includeSensorDataInGPX`, `sensorUsesAdvancedDetailInGPX` / `sensorDetailLevel` |
+| `OpenGpxTracker/PreferencesTableViewController.swift` | **GPX sensors** section (UISwitch rows) |
+
+When **Sensor data in GPX** is off, GPX output and behavior align with upstream Open GPX Tracker (no extra namespaces or `<extensions>` on track points from this feature).
 
 ### Add a custom tile server
 Adding a tile server is easy, just edit the file `GPXTileServer.swift`, uncomment the lines with `AnotherMap` and modify the templateUrl to point to the new tile server.
@@ -154,6 +171,7 @@ Please note that this source code was released under the GPL license.  So any ch
 
 This app uses:
 - [CoreGPX Framework](https://github.com/vincentneo/CoreGPX), a SWIFT library for using GPX files. Created by [@vincentneo](http://github.com/vincentneo)
+- Apple **Core Motion** (including **CMAltimeter**) for optional GPX sensor extensions (see table above)
 
 Entry on the [OpenStreetMap Wiki](https://wiki.openstreetmap.org/wiki/OpenGpxTracker)
 

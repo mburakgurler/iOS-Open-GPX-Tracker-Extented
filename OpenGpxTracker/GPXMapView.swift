@@ -255,10 +255,14 @@ class GPXMapView: MKMapView {
     /// - Parameters:
     ///    - location: Typically a location provided by CLLocation
     ///
-    func addPointToCurrentTrackSegmentAtLocation(_ location: CLLocation) {
-    let pt = GPXTrackPoint(location: location)
+    func addPointToCurrentTrackSegmentAtLocation(_ location: CLLocation, sensorSnapshot: SensorSnapshot? = nil) {
+        let pt = GPXTrackPoint(location: location)
+        if Preferences.shared.includeSensorDataInGPX, let snapshot = sensorSnapshot,
+           let ext = GPXSensorExtensionBuilder.gpxExtensions(from: snapshot, detailLevel: Preferences.shared.sensorDetailLevel) {
+            pt.extensions = ext
+        }
         coreDataHelper.add(toCoreData: pt, withTrackSegmentID: session.trackSegments.count)
-        session.addPointToCurrentTrackSegmentAtLocation(location)
+        session.addPointToCurrentTrackSegment(pt, derivedFrom: location)
         // RedrawCurrent track segment overlay
         // First remove last overlay, then re-add the overlay updated with the new point
         removeOverlay(currentSegmentOverlay)

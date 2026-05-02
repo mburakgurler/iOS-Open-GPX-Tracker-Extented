@@ -181,6 +181,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
             switch gpxTrackingStatus {
             case .notStarted:
                 print("switched to non started")
+                SensorSnapshotManager.shared.stop()
                 // Set tracker button to allow Start
                 trackerButton.setTitle(NSLocalizedString("START_TRACKING", comment: "no comment"), for: UIControl.State())
                 trackerButton.backgroundColor = kGreenButtonBackgroundColor
@@ -212,6 +213,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 
             case .tracking:
                 print("switched to tracking mode")
+                if Preferences.shared.includeSensorDataInGPX {
+                    SensorSnapshotManager.shared.start()
+                } else {
+                    SensorSnapshotManager.shared.stop()
+                }
                 // set tracerkButton to allow Pause
                 trackerButton.setTitle(NSLocalizedString("PAUSE", comment: "no comment"), for: UIControl.State())
                 trackerButton.backgroundColor = kPurpleButtonBackgroundColor
@@ -223,6 +229,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate {
                 
             case .paused:
                 print("switched to paused mode")
+                SensorSnapshotManager.shared.stop()
                 // set trackerButton to allow Resume
                 self.trackerButton.setTitle(NSLocalizedString("RESUME", comment: "no comment"), for: UIControl.State())
                 self.trackerButton.backgroundColor = kGreenButtonBackgroundColor
@@ -1515,7 +1522,10 @@ extension ViewController: CLLocationManagerDelegate {
         }
         if gpxTrackingStatus == .tracking {
             print("didUpdateLocation: adding point to track (\(newLocation.coordinate.latitude),\(newLocation.coordinate.longitude))")
-            map.addPointToCurrentTrackSegmentAtLocation(newLocation)
+            let sensorSnapshot: SensorSnapshot? = Preferences.shared.includeSensorDataInGPX
+                ? SensorSnapshotManager.shared.currentSnapshot()
+                : nil
+            map.addPointToCurrentTrackSegmentAtLocation(newLocation, sensorSnapshot: sensorSnapshot)
             totalTrackedDistanceLabel.distance = map.session.totalTrackedDistance
             currentSegmentDistanceLabel.distance = map.session.currentSegmentDistance
         }

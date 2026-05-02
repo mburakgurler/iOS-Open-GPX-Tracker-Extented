@@ -361,9 +361,9 @@ class CoreDataHelper {
                 if self.lastFileName != "" {
                     let gpx = GPXFileManager.URLForFilename(self.lastFileName)
                     let parsedRoot = GPXParser(withURL: gpx)?.parsedData()
-                    root = parsedRoot ?? GPXRoot(creator: kGPXCreatorString)
+                    root = parsedRoot ?? GPXSession.newRootForCurrentExportPreferences()
                 } else {
-                    root = GPXRoot(creator: kGPXCreatorString)
+                    root = GPXSession.newRootForCurrentExportPreferences()
                 }
                 // generates a GPXRoot from recovered data
                 if self.isContinued && self.tracksegments.count >= (self.lastTracksegmentId + 1) {

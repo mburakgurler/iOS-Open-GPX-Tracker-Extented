@@ -34,6 +34,15 @@ let kDefaultNameSection = 5
 /// GPX Files Location Section Id in PreferencesTableViewController
 let kGPXFilesLocationSection = 6
 
+/// GPX sensor extension section (iPhone sensors in exported GPX).
+let kGPXSensorSection = 7
+
+let kIncludeSensorDataCell = 0
+let kSensorAdvancedDetailSwitchCell = 1
+
+private let kSensorSwitchTagMaster = 9010
+private let kSensorSwitchTagAdvanced = 9011
+
 /// Cell Id of the Use Imperial units in UnitsSection
 let kUseImperialUnitsCell = 0
 
@@ -124,10 +133,9 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
     
     // MARK: - Table view data source
     
-    /// Returns 4 sections: Units, Cache, Map Source, Activity Type
+    /// Returns sections for units, screen, cache, map, activity, default name, GPX folder, and GPX sensors.
     override func numberOfSections(in tableView: UITableView?) -> Int {
-        // Return the number of sections.
-        return 7
+        return 8
     }
     
     /// Returns the title of the existing sections.
@@ -141,6 +149,7 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
         case kActivityTypeSection: return NSLocalizedString("ACTIVITY_TYPE", comment: "no comment")
         case kDefaultNameSection: return NSLocalizedString("DEFAULT_NAME_SECTION", comment: "no comment")
         case kGPXFilesLocationSection: return NSLocalizedString("GPX_FILES_FOLDER", comment: "no comment")
+        case kGPXSensorSection: return NSLocalizedString("GPX_SENSOR_SECTION", comment: "no comment")
         case kScreenSection: return NSLocalizedString("SCREEN", comment: "no comment")
         default: fatalError("Unknown section")
         }
@@ -158,6 +167,7 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
         case kDefaultNameSection: return 1
         case kGPXFilesLocationSection: return 1
         case kScreenSection: return 2
+        case kGPXSensorSection: return 2
         default: fatalError("Unknown section")
         }
     }
@@ -190,6 +200,8 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
             return cellForDefaultNameSection(at: indexPath)
         case kGPXFilesLocationSection:
             return cellForGPXFilesLocationSection(at: indexPath)
+        case kGPXSensorSection:
+            return cellForGPXSensorSection(at: indexPath)
         default:
             fatalError("Unknown section")
         }
@@ -290,6 +302,54 @@ class PreferencesTableViewController: UITableViewController, UINavigationBarDele
         }
         cell.accessoryType = .disclosureIndicator
         return cell
+    }
+    
+    private func cellForGPXSensorSection(at indexPath: IndexPath) -> UITableViewCell {
+        let reuseId: String
+        switch indexPath.row {
+        case kIncludeSensorDataCell: reuseId = "GPXSensorMasterCell"
+        case kSensorAdvancedDetailSwitchCell: reuseId = "GPXSensorAdvancedCell"
+        default: fatalError("Unknown GPX sensor cell")
+        }
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: reuseId)
+        cell.selectionStyle = .none
+        switch indexPath.row {
+        case kIncludeSensorDataCell:
+            cell.textLabel?.text = NSLocalizedString("INCLUDE_SENSOR_DATA_IN_GPX", comment: "no comment")
+            cell.detailTextLabel?.text = NSLocalizedString("INCLUDE_SENSOR_DATA_IN_GPX_DETAIL", comment: "no comment")
+            let toggle = UISwitch()
+            toggle.tag = kSensorSwitchTagMaster
+            toggle.isOn = preferences.includeSensorDataInGPX
+            toggle.addTarget(self, action: #selector(sensorGPXPreferenceSwitchChanged(_:)), for: .valueChanged)
+            cell.accessoryView = toggle
+        case kSensorAdvancedDetailSwitchCell:
+            cell.textLabel?.text = NSLocalizedString("SENSOR_ADVANCED_DETAIL_SWITCH", comment: "no comment")
+            cell.detailTextLabel?.text = NSLocalizedString("SENSOR_ADVANCED_DETAIL_SWITCH_DETAIL", comment: "no comment")
+            let toggle = UISwitch()
+            toggle.tag = kSensorSwitchTagAdvanced
+            toggle.isOn = preferences.sensorUsesAdvancedDetailInGPX
+            toggle.isEnabled = preferences.includeSensorDataInGPX
+            toggle.addTarget(self, action: #selector(sensorGPXPreferenceSwitchChanged(_:)), for: .valueChanged)
+            cell.accessoryView = toggle
+        default:
+            fatalError("Unknown GPX sensor cell")
+        }
+        return cell
+    }
+    
+    @objc private func sensorGPXPreferenceSwitchChanged(_ sender: UISwitch) {
+        switch sender.tag {
+        case kSensorSwitchTagMaster:
+            preferences.includeSensorDataInGPX = sender.isOn
+            if let advancedCell = tableView.cellForRow(at: IndexPath(row: kSensorAdvancedDetailSwitchCell, section: kGPXSensorSection)),
+               let advancedSwitch = advancedCell.accessoryView as? UISwitch {
+                advancedSwitch.isEnabled = sender.isOn
+            }
+        case kSensorSwitchTagAdvanced:
+            preferences.sensorUsesAdvancedDetailInGPX = sender.isOn
+        default:
+            break
+        }
     }
     
     /// Performs the following actions depending on the section and row selected:

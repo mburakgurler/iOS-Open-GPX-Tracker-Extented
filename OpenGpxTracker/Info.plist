@@ -2,12 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>GPX Tracker</string>
+	<string>GPX Tracker Extended</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -45,6 +43,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -62,6 +62,8 @@
 	<string>Location is needed to create GPX and add PDIs</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used to display in the map where are you and where you have been.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Motion sensors are used only when you enable sensor data in GPX export, to record accelerometer, altitude, and device attitude with each track point.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

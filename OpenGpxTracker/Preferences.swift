@@ -10,6 +10,12 @@
 import Foundation
 import CoreLocation
 
+/// Which sensors are embedded in GPX when sensor export is enabled.
+enum SensorDetailLevel: Int, CaseIterable {
+    case basic = 0
+    case advanced = 1
+}
+
 /// Key on Defaults for the Tile Server integer.
 let kDefaultsKeyTileServerInt: String = "TileServerInt"
 
@@ -43,6 +49,15 @@ let kDefaultsKeyGPXFilesFolder: String = "GPXFilesFolder"
 let kDefaultsKeyKeepScreenAlwaysOn: String = "KeepScreenAlwaysOn"
 
 let kDefaultsKeyShowScaleBar: String = "ShowScaleBar"
+
+/// Include iPhone sensor samples inside each GPX track point (`<extensions>`).
+let kDefaultsKeyIncludeSensorDataInGPX: String = "IncludeSensorDataInGPX"
+
+/// Legacy key; migrated to `SensorUsesAdvancedDetailInGPX` on first launch after upgrade.
+let kDefaultsKeySensorDetailLevel: String = "SensorDetailLevel"
+
+/// When sensor GPX export is on, adds gyroscope and magnetometer (otherwise basic sensors only).
+let kDefaultsKeySensorUsesAdvancedDetailInGPX: String = "SensorUsesAdvancedDetailInGPX"
 
 /// A class to handle app preferences in one single place.
 /// When the app starts for the first time the following preferences are set:
@@ -95,6 +110,10 @@ class Preferences: NSObject {
     
     ///
     private var _showScaleBar: Bool = true
+    
+    private var _includeSensorDataInGPX: Bool = false
+    
+    private var _sensorUsesAdvancedDetail: Bool = false
     
     /// UserDefaults.standard shortcut
     private let defaults = UserDefaults.standard
@@ -181,6 +200,20 @@ class Preferences: NSObject {
         if let showScaleBarBool = defaults.object(forKey: kDefaultsKeyShowScaleBar) as? Bool {
             _showScaleBar = showScaleBarBool
             print("** Preferences:: loaded preference from defaults showScaleBar \(showScaleBarBool)")
+        }
+        
+        if let includeSensor = defaults.object(forKey: kDefaultsKeyIncludeSensorDataInGPX) as? Bool {
+            _includeSensorDataInGPX = includeSensor
+            print("** Preferences:: loaded preference from defaults includeSensorDataInGPX \(includeSensor)")
+        }
+        
+        if let advanced = defaults.object(forKey: kDefaultsKeySensorUsesAdvancedDetailInGPX) as? Bool {
+            _sensorUsesAdvancedDetail = advanced
+            print("** Preferences:: loaded preference from defaults sensorUsesAdvancedDetail \(advanced)")
+        } else if let detailRaw = defaults.object(forKey: kDefaultsKeySensorDetailLevel) as? Int,
+                  detailRaw == SensorDetailLevel.advanced.rawValue {
+            _sensorUsesAdvancedDetail = true
+            print("** Preferences:: migrated sensorDetailLevel advanced → SensorUsesAdvancedDetailInGPX")
         }
         
     }
@@ -337,6 +370,33 @@ class Preferences: NSObject {
             _showScaleBar = newValue
             defaults.set(newValue, forKey: kDefaultsKeyShowScaleBar)
             print("** Preferences:: setting showScaleBar: \(newValue)")
+        }
+    }
+    
+    /// When true, active tracking records the latest sensor snapshot into each GPX track point.
+    var includeSensorDataInGPX: Bool {
+        get { _includeSensorDataInGPX }
+        set {
+            _includeSensorDataInGPX = newValue
+            defaults.set(newValue, forKey: kDefaultsKeyIncludeSensorDataInGPX)
+        }
+    }
+    
+    /// Basic = accelerometer, barometer, attitude. Advanced adds gyroscope and magnetometer (only when `includeSensorDataInGPX` is true).
+    var sensorDetailLevel: SensorDetailLevel {
+        get { _sensorUsesAdvancedDetail ? .advanced : .basic }
+        set {
+            _sensorUsesAdvancedDetail = (newValue == .advanced)
+            defaults.set(_sensorUsesAdvancedDetail, forKey: kDefaultsKeySensorUsesAdvancedDetailInGPX)
+        }
+    }
+    
+    /// Toggle for advanced sensor channels in GPX; ignored when `includeSensorDataInGPX` is false.
+    var sensorUsesAdvancedDetailInGPX: Bool {
+        get { _sensorUsesAdvancedDetail }
+        set {
+            _sensorUsesAdvancedDetail = newValue
+            defaults.set(newValue, forKey: kDefaultsKeySensorUsesAdvancedDetailInGPX)
         }
     }
     

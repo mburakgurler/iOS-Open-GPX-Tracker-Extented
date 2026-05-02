@@ -32,6 +32,20 @@ typealias GPXMapView = GPXSession
 ///
 class GPXSession {
     
+    /// GPX document root matching current export preferences (sensor namespace only when enabled on iOS).
+    static func newRootForCurrentExportPreferences() -> GPXRoot {
+        #if os(iOS)
+        if Preferences.shared.includeSensorDataInGPX {
+            return GPXRoot(
+                withExtensionAttributes: ["xmlns:sensor": "https://opengpxtracker.app/schema/sensor/1.0"],
+                schemaLocation: "https://opengpxtracker.app/schema/sensor/1.0 https://opengpxtracker.app/schema/sensor/1.0/sensor.xsd",
+                creator: kGPXCreatorString
+            )
+        }
+        #endif
+        return GPXRoot(creator: kGPXCreatorString)
+    }
+    
     /// List of waypoints currently displayed on the map.
     var waypoints: [GPXWaypoint] = []
     
@@ -83,14 +97,17 @@ class GPXSession {
     ///
     func addPointToCurrentTrackSegmentAtLocation(_ location: CLLocation) {
         let pt = GPXTrackPoint(location: location)
-        self.currentSegment.add(trackpoint: pt)
+        addPointToCurrentTrackSegment(pt, derivedFrom: location)
+    }
+    
+    /// Adds a track point that is already configured (for example with GPX extensions) and updates distances from `location`.
+    func addPointToCurrentTrackSegment(_ trackPoint: GPXTrackPoint, derivedFrom location: CLLocation) {
+        self.currentSegment.add(trackpoint: trackPoint)
         
-        // Add the distance to previous tracked point
-        if self.currentSegment.points.count >= 2 { // At elast there are two points in the segment
-            let prevPt = self.currentSegment.points[self.currentSegment.points.count-2] // Get previous point
+        if self.currentSegment.points.count >= 2 {
+            let prevPt = self.currentSegment.points[self.currentSegment.points.count - 2]
             guard let latitude = prevPt.latitude, let longitude = prevPt.longitude else { return }
             let prevPtLoc = CLLocation(latitude: latitude, longitude: longitude)
-            // Now get the distance
             let distance = prevPtLoc.distance(from: location)
             self.currentTrackDistance += distance
             self.totalTrackedDistance += distance
@@ -131,8 +148,7 @@ class GPXSession {
     ///
     func exportToGPXString() -> String {
         print("Exporting session data into GPX String")
-        // Create the gpx structure
-        let gpx = GPXRoot(creator: kGPXCreatorString)
+        let gpx = GPXSession.newRootForCurrentExportPreferences()
         gpx.add(waypoints: self.waypoints)
         let track = GPXTrack()
         track.add(trackSegments: self.trackSegments)
