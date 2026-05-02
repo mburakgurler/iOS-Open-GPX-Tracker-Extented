@@ -103,6 +103,12 @@
 		CAFE00122EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00022EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift */; };
 		CAFE00132EDE5D1B00390003 /* SensorSnapshotManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00032EDE5D1B00390003 /* SensorSnapshotManager.swift */; };
 		CAFE00142EDE5D1B00390004 /* MapTileProviderSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFE00042EDE5D1B00390004 /* MapTileProviderSupport.swift */; };
+		AACC10012EDE5D1B00390001 /* GPXAnalysisModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC00012EDE5D1B00390001 /* GPXAnalysisModels.swift */; };
+		AACC10022EDE5D1B00390002 /* GPXAnalysisEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC00022EDE5D1B00390002 /* GPXAnalysisEngine.swift */; };
+		AACC10032EDE5D1B00390003 /* GPXSensorExtensionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC00032EDE5D1B00390003 /* GPXSensorExtensionParser.swift */; };
+		AACC10062EDE5D1B00390006 /* GPXFileParseSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC00062EDE5D1B00390006 /* GPXFileParseSupport.swift */; };
+		AACC10042EDE5D1B00390004 /* AnalysisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC00042EDE5D1B00390004 /* AnalysisViewController.swift */; };
+		AACC10052EDE5D1B00390005 /* SimpleLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACC00052EDE5D1B00390005 /* SimpleLineChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -287,6 +293,12 @@
 		D39420E623CC1B0500EDC8F6 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DC4908A01C4A136F009484AE /* TrackerButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackerButton.swift; sourceTree = "<group>"; };
 		DC4908A21C4A332E009484AE /* MapViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewDelegate.swift; sourceTree = "<group>"; };
+		AACC00012EDE5D1B00390001 /* GPXAnalysisModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXAnalysisModels.swift; sourceTree = "<group>"; };
+		AACC00022EDE5D1B00390002 /* GPXAnalysisEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXAnalysisEngine.swift; sourceTree = "<group>"; };
+		AACC00032EDE5D1B00390003 /* GPXSensorExtensionParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXSensorExtensionParser.swift; sourceTree = "<group>"; };
+		AACC00062EDE5D1B00390006 /* GPXFileParseSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXFileParseSupport.swift; sourceTree = "<group>"; };
+		AACC00042EDE5D1B00390004 /* AnalysisViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisViewController.swift; sourceTree = "<group>"; };
+		AACC00052EDE5D1B00390005 /* SimpleLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleLineChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,6 +359,10 @@
 				CAFE00022EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift */,
 				CAFE00032EDE5D1B00390003 /* SensorSnapshotManager.swift */,
 				CAFE00042EDE5D1B00390004 /* MapTileProviderSupport.swift */,
+				AACC00012EDE5D1B00390001 /* GPXAnalysisModels.swift */,
+				AACC00022EDE5D1B00390002 /* GPXAnalysisEngine.swift */,
+				AACC00032EDE5D1B00390003 /* GPXSensorExtensionParser.swift */,
+				AACC00062EDE5D1B00390006 /* GPXFileParseSupport.swift */,
 				89EA86602157A08E002E03A7 /* Date+timeAgo.swift */,
 				89EA86642157C444002E03A7 /* Int+asFilesize.swift */,
 				89EA86622157B42C002E03A7 /* GPXFileInfo.swift */,
@@ -452,6 +468,7 @@
 			children = (
 				898EECDF19C49B5800B4B207 /* ViewController.swift */,
 				898EED3519C6402900B4B207 /* GPXFilesTableViewController.swift */,
+				AACC00042EDE5D1B00390004 /* AnalysisViewController.swift */,
 				899D677A19D10F7C00C88A0A /* GPXFilesTableViewControlllerDelegate.swift */,
 				899D678119D351DA00C88A0A /* AboutViewController.swift */,
 				8913CD8B1BDB0A9A009EC729 /* PreferencesTableViewController.swift */,
@@ -472,6 +489,7 @@
 				BFE026C5244A02A4005423E6 /* DatePatternButton.swift */,
 				BF68ECC52448B887005C779F /* DateFieldTypeView.swift */,
 				897056122A230AAF0004F133 /* Toast.swift */,
+				AACC00052EDE5D1B00390005 /* SimpleLineChartView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -794,6 +812,12 @@
 				CAFE00122EDE5D1B00390002 /* GPXSensorExtensionBuilder.swift in Sources */,
 				CAFE00132EDE5D1B00390003 /* SensorSnapshotManager.swift in Sources */,
 				CAFE00142EDE5D1B00390004 /* MapTileProviderSupport.swift in Sources */,
+				AACC10012EDE5D1B00390001 /* GPXAnalysisModels.swift in Sources */,
+				AACC10022EDE5D1B00390002 /* GPXAnalysisEngine.swift in Sources */,
+				AACC10032EDE5D1B00390003 /* GPXSensorExtensionParser.swift in Sources */,
+				AACC10062EDE5D1B00390006 /* GPXFileParseSupport.swift in Sources */,
+				AACC10042EDE5D1B00390004 /* AnalysisViewController.swift in Sources */,
+				AACC10052EDE5D1B00390005 /* SimpleLineChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

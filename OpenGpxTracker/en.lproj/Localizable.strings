@@ -30,8 +30,10 @@
 "DELETE" = "Delete";
 "SELECT_OPTION" = "Select option";
 "LOAD_IN_MAP" = "Load in map";
+"ANALYZE_TRACK" = "Analyze track";
 "SHARE" = "Share";
 "LOADING_FILE" = "Loading GPX File...";
+"COULD_NOT_OPEN_GPX_FILE" = "Could not read this GPX file.";
 "ABOUT" = "About";
 
 // Preferences
@@ -169,4 +171,40 @@
 "GMT_FULL" = "GMT full";
 "LOCATION" = "Location";
 "LOCATION_TIME" = "Location's Time";
+
+// Track analysis (modal, no map)
+"ANALYSIS_LOAD_FAILED" = "Could not read this GPX file.";
+"ANALYSIS_NO_TRACK_POINTS" = "This file has no track points to analyze.";
+"ANALYSIS_APPLY_RANGE" = "Apply range";
+"ANALYSIS_RESET_RANGE" = "Full track";
+"ANALYSIS_RANGE_TIMES" = "Range: %@ → %@";
+"ANALYSIS_SECTION_SUMMARY" = "Summary";
+"ANALYSIS_SUBSECTION_TRACK" = "Track";
+"ANALYSIS_SUBSECTION_SENSORS" = "Sensors & environment";
+"ANALYSIS_SUBSECTION_QUALITY" = "Recording gaps & quality";
+"ANALYSIS_SECTION_RANGE" = "Range";
+"ANALYSIS_SECTION_QUALITY" = "Recording gaps & quality";
+"ANALYSIS_SECTION_CHARTS" = "Charts";
+"ANALYSIS_CHART_SPEED" = "Speed (smoothed)";
+"ANALYSIS_CHART_ELEVATION" = "Elevation (GPS)";
+"ANALYSIS_CHART_GRADE" = "Grade";
+"ANALYSIS_CHART_ACCEL_MAG" = "Acceleration magnitude";
+"ANALYSIS_CHART_REL_ALTITUDE" = "Barometric relative altitude";
+"ANALYSIS_CHART_VIBRATION" = "Vibration index";
+"ANALYSIS_STAT_DISTANCE" = "Distance";
+"ANALYSIS_STAT_DURATION" = "Duration";
+"ANALYSIS_STAT_AVG_SPEED" = "Average speed";
+"ANALYSIS_STAT_MAX_SPEED" = "Maximum speed";
+"ANALYSIS_STAT_ELEV_GAIN" = "Elevation gain";
+"ANALYSIS_STAT_MIN_ELEV" = "Minimum elevation";
+"ANALYSIS_STAT_MAX_ELEV" = "Maximum elevation";
+"ANALYSIS_STAT_AVG_PACE" = "Average pace";
+"ANALYSIS_STAT_MAX_DYN_ACCEL" = "Max dynamic acceleration";
+"ANALYSIS_STAT_AVG_VIBRATION" = "Avg vibration index";
+"ANALYSIS_STAT_PRESSURE_RANGE" = "Pressure range";
+"ANALYSIS_STAT_REL_ALT_RANGE" = "Relative altitude range";
+"ANALYSIS_QUALITY_GAPS" = "GPS time gaps (over 60 s): %d";
+"ANALYSIS_QUALITY_MAX_GAP" = "Longest gap: %.0f s";
+"ANALYSIS_QUALITY_SPIKES" = "Speed spikes (over 50 m/s): %d";
+"ANALYSIS_QUALITY_SENSOR_COV" = "Sensor snapshots: %.0f%% of points";
 

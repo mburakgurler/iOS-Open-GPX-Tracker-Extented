@@ -245,7 +245,10 @@ class GPXFilesTableViewController: UITableViewController, UINavigationBarDelegat
         let shareOption = UIAlertAction(title: NSLocalizedString("SHARE", comment: "no comment"), style: .default) { _ in
             self.actionShareFileAtIndex(indexPath.row, tableView: tableView, indexPath: indexPath)
         }
-        
+        let analyzeOption = UIAlertAction(title: NSLocalizedString("ANALYZE_TRACK", comment: "no comment"), style: .default) { _ in
+            self.actionAnalyzeFileAtIndex(indexPath.row)
+        }
+
         let cancelOption = UIAlertAction(title: NSLocalizedString("CANCEL", comment: "no comment"), style: .cancel) { _ in
             self.actionSheetCancel(sheet)
         }
@@ -256,6 +259,7 @@ class GPXFilesTableViewController: UITableViewController, UINavigationBarDelegat
         
         sheet.addAction(mapOption)
         sheet.addAction(shareOption)
+        sheet.addAction(analyzeOption)
         sheet.addAction(cancelOption)
         sheet.addAction(deleteOption)
         
@@ -328,10 +332,10 @@ class GPXFilesTableViewController: UITableViewController, UINavigationBarDelegat
             DispatchQueue.main.sync {
                 self.displayLoadingFileAlert(true)
             }
-            guard let gpx = GPXParser(withURL: gpxFileURL)?.parsedData() else {
+            guard let gpx = GPXFileParseSupport.parseRoot(fromFileURL: gpxFileURL) else {
                 print("GPXFileTableViewController:: load of GPX file failed")
                 DispatchQueue.main.sync {
-                    Toast.error("Could not open file")
+                    Toast.error(NSLocalizedString("COULD_NOT_OPEN_GPX_FILE", comment: ""))
                     self.displayLoadingFileAlert(false)
                 }
                 return
@@ -386,6 +390,26 @@ class GPXFilesTableViewController: UITableViewController, UINavigationBarDelegat
         completion()
     }
     
+    /// Presents offline analysis (stats and charts, no map) for the GPX at `rowIndex`.
+    internal func actionAnalyzeFileAtIndex(_ rowIndex: Int) {
+        guard let gpxFileInfo = fileList.object(at: rowIndex) as? GPXFileInfo else {
+            print("GPXFileTableViewController:: actionAnalyzeFileAtIndex(\(rowIndex)): failed to get fileURL")
+            return
+        }
+        let vc = AnalysisViewController(fileURL: gpxFileInfo.fileURL, displayTitle: gpxFileInfo.fileName)
+        let nav = UINavigationController(rootViewController: vc)
+        if #available(iOS 13.0, *) {
+            nav.modalPresentationStyle = .pageSheet
+        } else {
+            nav.modalPresentationStyle = .formSheet
+        }
+        if #available(iOS 15.0, *) {
+            nav.sheetPresentationController?.detents = [.medium(), .large()]
+            nav.sheetPresentationController?.prefersGrabberVisible = true
+        }
+        present(nav, animated: true, completion: nil)
+    }
+
     /// Shares file at `rowIndex`.
     internal func actionShareFileAtIndex(_ rowIndex: Int, tableView: UITableView, indexPath: IndexPath) {
         guard let gpxFileInfo: GPXFileInfo = (fileList.object(at: rowIndex) as? GPXFileInfo) else {

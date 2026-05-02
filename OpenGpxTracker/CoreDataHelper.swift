@@ -360,7 +360,7 @@ class CoreDataHelper {
                 // will load file if file was resumed before crash
                 if self.lastFileName != "" {
                     let gpx = GPXFileManager.URLForFilename(self.lastFileName)
-                    let parsedRoot = GPXParser(withURL: gpx)?.parsedData()
+                    let parsedRoot = GPXFileParseSupport.parseRoot(fromFileURL: gpx)
                     root = parsedRoot ?? GPXSession.newRootForCurrentExportPreferences()
                 } else {
                     root = GPXSession.newRootForCurrentExportPreferences()
