@@ -78,6 +78,27 @@ enum GPXTileServer: Int {
 
     /// Thunderforest Outdoors (API key required)
     case thunderforestOutdoors = 12
+
+    /// Esri World Imagery (no API key; follow Esri/OSM attribution terms)
+    case esriWorldImagery = 13
+
+    /// Esri World Topographic (no API key)
+    case esriWorldTopo = 14
+
+    /// Stadia Alidade Smooth Dark (API key required; same key as Stadia Smooth)
+    case stadiaAlidadeSmoothDark = 15
+
+    /// Wikimedia OSM style (no API key; follow Wikimedia tile usage policy)
+    case wikimediaMaps = 16
+
+    /// CyclOSM bicycle-oriented style
+    case cyclOSM = 17
+
+    /// CartoDB Positron at @2x (512 px tiles)
+    case cartoDBPositronRetina = 18
+
+    /// CartoDB Dark Matter at @2x (512 px tiles)
+    case cartoDBDarkMatterRetina = 19
     
     /// String that describes the selected tile server.
     var name: String {
@@ -92,9 +113,16 @@ enum GPXTileServer: Int {
         case .cartoDBPositron: return "CartoDB Positron"
         case .cartoDBDarkMatter: return "CartoDB Dark Matter"
         case .openStreetMapHumanitarian: return "OpenStreetMap Humanitarian"
-        case .mapTilerStreets: return "MapTiler Streets"
-        case .stadiaAlidadeSmooth: return "Stadia Alidade Smooth"
-        case .thunderforestOutdoors: return "Thunderforest Outdoors"
+        case .mapTilerStreets: return "MapTiler Streets API Key"
+        case .stadiaAlidadeSmooth: return "Stadia Alidade Smooth API Key"
+        case .thunderforestOutdoors: return "Thunderforest Outdoors API Key"
+        case .esriWorldImagery: return "Esri World Imagery"
+        case .esriWorldTopo: return "Esri World Topographic"
+        case .stadiaAlidadeSmoothDark: return "Stadia Alidade Smooth Dark"
+        case .wikimediaMaps: return "Wikimedia Maps"
+        case .cyclOSM: return "CyclOSM"
+        case .cartoDBPositronRetina: return "CartoDB Positron (Retina)"
+        case .cartoDBDarkMatterRetina: return "CartoDB Dark Matter (Retina)"
         }
     }
 
@@ -113,10 +141,22 @@ enum GPXTileServer: Int {
             return "© OpenSeaMap contributors"
         case .mapTilerStreets:
             return "© MapTiler © OpenStreetMap contributors"
-        case .stadiaAlidadeSmooth:
+        case .stadiaAlidadeSmooth, .stadiaAlidadeSmoothDark:
             return "© Stadia Maps © OpenMapTiles © OpenStreetMap contributors"
         case .thunderforestOutdoors:
             return "Maps © Thunderforest, Data © OpenStreetMap contributors"
+        case .esriWorldImagery:
+            return "© Esri, Maxar, Earthstar Geographics, GIS User Community"
+        case .esriWorldTopo:
+            return "© Esri, TomTom, Garmin, OpenStreetMap, and GIS user community"
+        case .wikimediaMaps:
+            return "© Wikimedia, © OpenStreetMap contributors"
+        case .cyclOSM:
+            return "© CyclOSM © OpenStreetMap contributors"
+        case .cartoDBPositronRetina:
+            return "© OpenStreetMap contributors © CARTO"
+        case .cartoDBDarkMatterRetina:
+            return "© OpenStreetMap contributors © CARTO"
         }
     }
 
@@ -125,7 +165,7 @@ enum GPXTileServer: Int {
         switch self {
         case .mapTilerStreets:
             return .mapTiler
-        case .stadiaAlidadeSmooth:
+        case .stadiaAlidadeSmooth, .stadiaAlidadeSmoothDark:
             return .stadia
         case .thunderforestOutdoors:
             return .thunderforest
@@ -156,6 +196,20 @@ enum GPXTileServer: Int {
             return "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png?api_key={apiKey}"
         case .thunderforestOutdoors:
             return "https://api.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey={apiKey}"
+        case .esriWorldImagery:
+            return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+        case .esriWorldTopo:
+            return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+        case .stadiaAlidadeSmoothDark:
+            return "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png?api_key={apiKey}"
+        case .wikimediaMaps:
+            return "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
+        case .cyclOSM:
+            return "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"
+        case .cartoDBPositronRetina:
+            return "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png"
+        case .cartoDBDarkMatterRetina:
+            return "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png"
         }
     }
     
@@ -175,8 +229,13 @@ enum GPXTileServer: Int {
         case .openTopoMap: return ["a", "b", "c"]
         case .openStreetMapHumanitarian: return ["a", "b", "c"]
         case .openSeaMap: return []
-        case .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors:
+        case .mapTilerStreets, .stadiaAlidadeSmooth, .stadiaAlidadeSmoothDark, .thunderforestOutdoors,
+             .esriWorldImagery, .esriWorldTopo, .wikimediaMaps:
             return []
+        case .cyclOSM:
+            return ["a", "b", "c"]
+        case .cartoDBPositronRetina, .cartoDBDarkMatterRetina:
+            return ["a", "b", "c", "d"]
         // case .AnotherMap: return ["a","b"]
         }
     }
@@ -216,6 +275,16 @@ enum GPXTileServer: Int {
             return 20
         case .thunderforestOutdoors:
             return 22
+        case .esriWorldImagery, .esriWorldTopo:
+            return 19
+        case .stadiaAlidadeSmoothDark:
+            return 20
+        case .wikimediaMaps:
+            return 18
+        case .cyclOSM:
+            return 20
+        case .cartoDBPositronRetina, .cartoDBDarkMatterRetina:
+            return 20
         }
     }
     ///
@@ -241,7 +310,9 @@ enum GPXTileServer: Int {
         case .openSeaMap:
             return 0
         case .cartoDBPositron, .cartoDBDarkMatter, .openStreetMapHumanitarian,
-             .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors:
+             .mapTilerStreets, .stadiaAlidadeSmooth, .stadiaAlidadeSmoothDark, .thunderforestOutdoors,
+             .esriWorldImagery, .esriWorldTopo, .wikimediaMaps, .cyclOSM,
+             .cartoDBPositronRetina, .cartoDBDarkMatterRetina:
             return 0
         // case .AnotherMap: return 0
         }
@@ -262,7 +333,7 @@ enum GPXTileServer: Int {
     /// 2x/retina tiles are 512x512
     var tileSize: Int {
         switch self {
-        case .cartoDBRetina: return 512
+        case .cartoDBRetina, .cartoDBPositronRetina, .cartoDBDarkMatterRetina: return 512
         default: return 256
         }
     }
@@ -279,15 +350,18 @@ enum GPXTileServer: Int {
         switch self {
         case .apple: return .system
         case .appleSatellite: return .darkMode
-        case .cartoDBDarkMatter: return .darkMode
-        case .cartoDB, .cartoDBRetina, .cartoDBPositron, .openTopoMap, .openSeaMap, .openStreetMap,
-             .openStreetMapHumanitarian, .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors:
+        case .cartoDBDarkMatter, .cartoDBDarkMatterRetina, .stadiaAlidadeSmoothDark: return .darkMode
+        case .esriWorldImagery:
+            return .darkMode
+        case .cartoDB, .cartoDBRetina, .cartoDBPositron, .cartoDBPositronRetina, .openTopoMap, .openSeaMap, .openStreetMap,
+             .openStreetMapHumanitarian, .mapTilerStreets, .stadiaAlidadeSmooth, .thunderforestOutdoors,
+             .esriWorldTopo, .wikimediaMaps, .cyclOSM:
             return .lightMode
         }
     }
 
     /// Returns the number of tile servers currently defined
-    static var count: Int { GPXTileServer.thunderforestOutdoors.rawValue + 1 }
+    static var count: Int { GPXTileServer.cartoDBDarkMatterRetina.rawValue + 1 }
 }
 
 #if os(iOS)
